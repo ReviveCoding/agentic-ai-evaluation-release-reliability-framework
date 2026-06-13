@@ -57,7 +57,7 @@ Full architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 ### Lightweight CPU smoke test
 
 ```powershell
-python scripts_build_dataset.py --use-sample
+python scripts/01_build_dataset.py --use-sample
 python scripts/02_train_model.py --backend sklearn
 python scripts/03_run_evaluation.py
 python scripts/04_replay_failures.py
