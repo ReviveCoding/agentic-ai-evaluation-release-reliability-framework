@@ -1,0 +1,16 @@
+.git
+.venv
+venv
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+outputs
+models
+data/raw
+data/monte_carlo_raw
+data/monte_carlo_processed
+*.pyc
+*.pyo
+*.sqlite
+*.zip

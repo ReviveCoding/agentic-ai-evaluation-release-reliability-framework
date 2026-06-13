@@ -1,0 +1,79 @@
+{
+  "backup_directory": "_doc_backups\\final_release_20260612_232936",
+  "claim_boundaries": [
+    "public SGD-derived data",
+    "local and GitHub-runnable",
+    "schema-conditioned tool routing",
+    "compatible execution metrics separated from strict provenance metrics",
+    "stable-field replay scoped to the same environment",
+    "not production deployed and not an Apple or Siri system"
+  ],
+  "environment": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9"
+  },
+  "functional_status": "FROZEN",
+  "generated_at_utc": "2026-06-13T03:29:37.091315+00:00",
+  "hardening_status": "PASS_MEANINGFUL_GAIN",
+  "metrics": {
+    "hardening_deltas": {
+      "id_compatible_top1": 0.28246753246753253,
+      "id_groundedness": 0.1576182136602451,
+      "id_release_pass_rate": 0.1576182136602452
+    },
+    "id": {
+      "compatible_hit_at_k": 0.9772727272727273,
+      "compatible_top1": 0.6428571428571429,
+      "groundedness": 0.8073555166374781,
+      "release_pass_rate": 0.5691768826619965,
+      "strict_hit_at_k": 0.36038961038961037,
+      "strict_top1": 0.1590909090909091,
+      "tool_accuracy": 0.9947460595446584,
+      "trajectory_success": 0.8073555166374781
+    },
+    "ood_dev": {
+      "groundedness": 0.7569116655428186,
+      "release_pass_rate": 0.6348617666891436,
+      "tool_accuracy": 0.9062710721510452,
+      "trajectory_success": 0.7569116655428186
+    },
+    "ood_test": {
+      "groundedness": 0.7111111111111111,
+      "release_pass_rate": 0.5338820301783265,
+      "tool_accuracy": 0.9593964334705075,
+      "trajectory_success": 0.7111111111111111
+    },
+    "replay": {
+      "failed_or_review_runs": 246,
+      "verification_rate": 1.0,
+      "verified_runs": 246
+    }
+  },
+  "project": "Agentic AI Evaluation & Release Reliability Framework",
+  "sha256": {
+    "CHANGELOG.md": "8445385f50af9e43b9961bf5f2115b1a7ad3415d29dd26cb36862c6c662766d4",
+    "CITATION.cff": "5ae0982aa1769564620efdf513aad3d6b3adca9be83c1cf9436ff3df875c0261",
+    "PROJECT_SUMMARY.md": "9cc88626641742d73e76cdcfc33e8a37b581628253a1f27c9a6e7090fc1067ac",
+    "README.md": "01d15905663b595ff42980ed025e1178817640557efba18c165b1559c456c873",
+    "VERSION": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1",
+    "docs/ARCHITECTURE.md": "ef24c291f77d6f8ce72bfead4e9f90d3770b1d42f51a6a9cecb7aa8bf97c288e",
+    "docs/LIMITATIONS.md": "d912f150353eee3b3ad542f0f868e5c6baf1d559af792eeb8f7970caa01a05c6",
+    "docs/MODEL_CARD.md": "80ec78b16b98d9abdbd8ba3b16a09c68e84e59198d05f25a8618bd58461dc9fe",
+    "docs/RELEASE_CHECKLIST.md": "417693de3d0531c376fef0b860200bb23bfa3d9d01441d3d46c4c3673b9abd3d",
+    "docs/REPRODUCIBILITY.md": "429b94ef8e233286c9f69f12f768786d73ec2ffd41be8b6463f25aa93c1e3541",
+    "docs/RESULTS.md": "c463c54741c288101fe09c0c72bcdc3fce3f0d0c21bd3c3f3b812df4e41254ce",
+    "docs/RESUME_CLAIMS.md": "94ac6c632ca76f7dc03b0ac186fba391ab4a49ae9ca863f54dddd3ad7dcf2b0f",
+    "models/tool_policy/metrics.json": "165618702ee67915270f476547c67da5741dc5efe48b1f3a9b62c88eb9505d3a",
+    "outputs/evaluation_results.json": "e2eaf1d6e31c5819033a79beb2fc8725d30e1c84e46117141d76efbd2d838fc8",
+    "outputs/ood_summary.json": "88fb1b51a35724515f3a621cc19e51f90e204047383edd681702993cb962b3d9",
+    "outputs/replay_failures.json": "3bb13cc6714ea70dd181c2c00b32d9715be6c1b3aac783d5a71784b90663aaab",
+    "outputs/top1_hardening_comparison.json": "cb17b387a5dbf8f8aecb86ccdf762618c21b6f738034e01e9c1300e7b7cb7abe"
+  },
+  "test_summary": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 70
+  },
+  "version": "1.0.0"
+}

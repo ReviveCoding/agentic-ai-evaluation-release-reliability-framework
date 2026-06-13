@@ -1,0 +1,7 @@
+# Install this after requirements.txt for local GPU training.
+# Choose the PyTorch wheel matching your CUDA version from https://pytorch.org/get-started/locally/
+# Example only; use the command generated for your local CUDA version:
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+transformers>=4.40,<6
+datasets>=2.18,<5
+accelerate>=0.29,<2

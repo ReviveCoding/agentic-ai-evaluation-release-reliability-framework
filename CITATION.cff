@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: "Agentic AI Evaluation & Release Reliability Framework"
+message: "If you use this software, please cite it using this metadata."
+type: software
+authors:
+  - family-names: "Bae"
+    given-names: "Jinwoo"
+version: "1.0.0"
+date-released: "2026-06-12"
+license: Apache-2.0

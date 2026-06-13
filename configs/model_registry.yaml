@@ -1,0 +1,16 @@
+models:
+  rule_baseline:
+    type: rule_policy
+    enabled: true
+  sklearn_tool_policy:
+    type: sklearn_logreg_tfidf
+    enabled: true
+  transformer_tool_policy:
+    type: hf_sequence_classifier
+    enabled: false
+    model_name: distilbert-base-uncased
+    gpu_enabled: true
+  hybrid_tool_policy:
+    type: metadata_confidence_router
+    enabled: true
+    fallback: sklearn_tool_policy

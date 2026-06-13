@@ -1,0 +1,15 @@
+raw_sgd_dir: data/raw/sgd
+processed_dir: data/processed
+sample_if_missing: false
+max_dialogues_per_split: null
+splits:
+  train: train
+  calibration: dev
+  eval: test
+required_raw_files:
+  - train/schema.json
+  - dev/schema.json
+  - test/schema.json
+  - train/dialogues_*.json
+  - dev/dialogues_*.json
+  - test/dialogues_*.json

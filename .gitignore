@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments
+.venv/
+venv/
+.env
+
+# Generated model/output artifacts
+models/
+outputs/
+
+# Raw downloaded data
+/data/raw/sgd_download/
+/data/raw/sgd_full/
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+_patch_backups/
+_doc_backups/
+build/
+dist/
+*.egg-info/
+data/processed/*
+!data/processed/.gitkeep
+apply_public_release_hardening.py
+run_public_release_hardening.ps1
+*.log
+
+# Keep Python package model sources tracked
+!src/agentic_eval_framework/models/
+!src/agentic_eval_framework/models/**

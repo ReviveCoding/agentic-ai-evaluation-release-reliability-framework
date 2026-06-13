@@ -1,0 +1,147 @@
+[
+  {
+    "service_name": "Hotels_1",
+    "description": "Find and reserve hotels by city, date, price, and amenities.",
+    "slots": [
+      {
+        "name": "location",
+        "description": "City or area"
+      },
+      {
+        "name": "wifi",
+        "description": "Whether free wifi is required"
+      },
+      {
+        "name": "check_in_date",
+        "description": "Check-in date"
+      }
+    ],
+    "intents": [
+      {
+        "name": "SearchHotel",
+        "description": "Search for hotels",
+        "required_slots": [
+          "location"
+        ],
+        "optional_slots": [
+          "wifi",
+          "check_in_date"
+        ]
+      }
+    ]
+  },
+  {
+    "service_name": "Calendar_1",
+    "description": "Look up or create calendar events.",
+    "slots": [
+      {
+        "name": "date",
+        "description": "Date of the event"
+      },
+      {
+        "name": "time",
+        "description": "Time of the event"
+      },
+      {
+        "name": "title",
+        "description": "Event title"
+      }
+    ],
+    "intents": [
+      {
+        "name": "GetEvents",
+        "description": "Look up calendar events",
+        "required_slots": [
+          "date"
+        ],
+        "optional_slots": []
+      },
+      {
+        "name": "CreateEvent",
+        "description": "Create a calendar event",
+        "required_slots": [
+          "date",
+          "time",
+          "title"
+        ],
+        "optional_slots": []
+      }
+    ]
+  },
+  {
+    "service_name": "Weather_1",
+    "description": "Retrieve weather forecasts by location and date.",
+    "slots": [
+      {
+        "name": "location",
+        "description": "City or area"
+      },
+      {
+        "name": "date",
+        "description": "Forecast date"
+      }
+    ],
+    "intents": [
+      {
+        "name": "GetWeather",
+        "description": "Get weather forecast",
+        "required_slots": [
+          "location"
+        ],
+        "optional_slots": [
+          "date"
+        ]
+      }
+    ]
+  },
+  {
+    "service_name": "Media_1",
+    "description": "Search movies, music, and other media.",
+    "slots": [
+      {
+        "name": "genre",
+        "description": "Media genre"
+      },
+      {
+        "name": "title",
+        "description": "Media title"
+      }
+    ],
+    "intents": [
+      {
+        "name": "SearchMedia",
+        "description": "Search media catalog",
+        "required_slots": [],
+        "optional_slots": [
+          "genre",
+          "title"
+        ]
+      }
+    ]
+  },
+  {
+    "service_name": "Bank_1",
+    "description": "Banking and payment related services. Sensitive actions require review.",
+    "slots": [
+      {
+        "name": "account",
+        "description": "Bank account"
+      },
+      {
+        "name": "amount",
+        "description": "Payment amount"
+      }
+    ],
+    "intents": [
+      {
+        "name": "TransferMoney",
+        "description": "Transfer money",
+        "required_slots": [
+          "account",
+          "amount"
+        ],
+        "optional_slots": []
+      }
+    ]
+  }
+]

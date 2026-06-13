@@ -1,0 +1,23 @@
+evaluators:
+  tool_accuracy:
+    enabled: true
+  trajectory_success:
+    enabled: true
+  groundedness:
+    enabled: true
+  ambiguity:
+    enabled: true
+  safety:
+    enabled: true
+  latency:
+    enabled: true
+  optional_llm_judge:
+    enabled: false
+  forbidden_tools:
+    enabled: true
+  execution_reliability:
+    enabled: true
+  retry_recovery:
+    enabled: true
+  terminal_safety:
+    enabled: true

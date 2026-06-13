@@ -1,0 +1,191 @@
+[
+  {
+    "dialogue_id": "sample_001_test",
+    "services": [
+      "Hotels_1"
+    ],
+    "turns": [
+      {
+        "speaker": "USER",
+        "utterance": "I need lodging near Cambridge and wifi must be included.",
+        "frames": [
+          {
+            "service": "Hotels_1",
+            "state": {
+              "active_intent": "SearchHotel",
+              "slot_values": {
+                "location": [
+                  "Cambridge"
+                ],
+                "wifi": [
+                  "true"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "speaker": "SYSTEM",
+        "utterance": "I found several hotels in Cambridge with free wifi.",
+        "frames": []
+      }
+    ]
+  },
+  {
+    "dialogue_id": "sample_002_test",
+    "services": [
+      "Calendar_1"
+    ],
+    "turns": [
+      {
+        "speaker": "USER",
+        "utterance": "Which appointments are on tomorrow's agenda?",
+        "frames": [
+          {
+            "service": "Calendar_1",
+            "state": {
+              "active_intent": "GetEvents",
+              "slot_values": {
+                "date": [
+                  "tomorrow"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "speaker": "SYSTEM",
+        "utterance": "You have two meetings tomorrow.",
+        "frames": []
+      }
+    ]
+  },
+  {
+    "dialogue_id": "sample_003_test",
+    "services": [
+      "Calendar_1"
+    ],
+    "turns": [
+      {
+        "speaker": "USER",
+        "utterance": "Add a calendar item for lunch with Dana.",
+        "frames": [
+          {
+            "service": "Calendar_1",
+            "state": {
+              "active_intent": "CreateEvent",
+              "slot_values": {
+                "title": [
+                  "lunch with Dana"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "speaker": "SYSTEM",
+        "utterance": "What date and time should I schedule it for?",
+        "frames": []
+      }
+    ]
+  },
+  {
+    "dialogue_id": "sample_004_test",
+    "services": [
+      "Weather_1"
+    ],
+    "turns": [
+      {
+        "speaker": "USER",
+        "utterance": "Give me the weekend rain outlook for New York.",
+        "frames": [
+          {
+            "service": "Weather_1",
+            "state": {
+              "active_intent": "GetWeather",
+              "slot_values": {
+                "location": [
+                  "New York"
+                ],
+                "date": [
+                  "this weekend"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "speaker": "SYSTEM",
+        "utterance": "I can check the forecast for New York this weekend.",
+        "frames": []
+      }
+    ]
+  },
+  {
+    "dialogue_id": "sample_005_test",
+    "services": [
+      "Media_1"
+    ],
+    "turns": [
+      {
+        "speaker": "USER",
+        "utterance": "Recommend a movie in the science-fiction genre.",
+        "frames": [
+          {
+            "service": "Media_1",
+            "state": {
+              "active_intent": "SearchMedia",
+              "slot_values": {
+                "genre": [
+                  "science fiction"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "speaker": "SYSTEM",
+        "utterance": "Here are some science fiction movies.",
+        "frames": []
+      }
+    ]
+  },
+  {
+    "dialogue_id": "sample_006_test",
+    "services": [
+      "Bank_1"
+    ],
+    "turns": [
+      {
+        "speaker": "USER",
+        "utterance": "Please send five hundred dollars to savings.",
+        "frames": [
+          {
+            "service": "Bank_1",
+            "state": {
+              "active_intent": "TransferMoney",
+              "slot_values": {
+                "account": [
+                  "savings"
+                ],
+                "amount": [
+                  "500"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "speaker": "SYSTEM",
+        "utterance": "This requires a safety review before taking action.",
+        "frames": []
+      }
+    ]
+  }
+]

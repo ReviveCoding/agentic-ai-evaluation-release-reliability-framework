@@ -1,0 +1,19 @@
+tools:
+  search_docs:
+    description: Retrieve document evidence for personal or enterprise search tasks.
+  search_places:
+    description: Search hotels, restaurants, travel, events, and place-like services.
+  calendar_lookup:
+    description: Retrieve or inspect calendar-related information.
+  calendar_write:
+    description: Stage a calendar write action that requires confirmation before any side effect.
+  media_search:
+    description: Search movies, music, shows, and media-like services.
+  weather_lookup:
+    description: Retrieve weather information.
+  ask_clarification:
+    description: Ask for missing required information before taking action.
+  safety_check:
+    description: Review sensitive or policy-constrained requests before acting.
+  final_answer:
+    description: Complete the task with a grounded answer.
