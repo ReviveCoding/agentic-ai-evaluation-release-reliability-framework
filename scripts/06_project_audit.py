@@ -91,7 +91,10 @@ def audit_project(root: Path = ROOT_DIR) -> dict:
         warnings.append("Development cache directories are present in the working tree; release packaging excludes them.")
     version_consistent = False
     try:
-        import tomllib
+        try:
+            import tomllib
+        except ModuleNotFoundError:
+            import tomli as tomllib
         pyproject_version = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
         from agentic_eval_framework import __version__
         version_consistent = pyproject_version == __version__

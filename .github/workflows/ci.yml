@@ -35,7 +35,7 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install --upgrade pip build
       - run: python -m build
-      - run: python -m pip install --no-deps --target wheel_check dist/*.whl
+      - run: python -m pip install --target wheel_check dist/*.whl
       - run: PYTHONPATH=wheel_check python -c "import agentic_eval_framework; from agentic_eval_framework.api.app import app; print(app.title)"
 
   docker:

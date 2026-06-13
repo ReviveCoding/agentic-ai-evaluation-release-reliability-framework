@@ -4,7 +4,7 @@ Status: **PASS**
 
 - Wheel built: `True`
 - Wheel: `agentic_eval_framework-1.0.0-py3-none-any.whl`
-- Wheel size bytes: `97575`
+- Wheel size bytes: `97598`
 - Expected version: `1.0.0`
 - Verified installed version: `1.0.0`
 - Installed-wheel import return code: `0`
