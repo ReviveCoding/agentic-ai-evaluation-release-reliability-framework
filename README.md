@@ -7,7 +7,6 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
-
 **GPU-Trained Tool Policy, Retrieval Hardening, Deterministic Replay, and Release Gates**
 
 An end-to-end framework for training, executing, evaluating, replaying, and release-gating tool-using AI workflows.
@@ -84,7 +83,6 @@ python scripts/19_evaluate_retrieval_top1.py
 - [Model card](docs/MODEL_CARD.md)
 - [Limitations and claim boundaries](docs/LIMITATIONS.md)
 - [Reproducibility](docs/REPRODUCIBILITY.md)
-- [Resume and interview claims](docs/RESUME_CLAIMS.md)
 - [Release checklist](docs/RELEASE_CHECKLIST.md)
 - [Changelog](CHANGELOG.md)
 
@@ -97,7 +95,6 @@ Compatible retrieval and strict provenance are reported separately. Replay verif
 ## Release
 
 The final functional version is frozen as **v1.0.0**. Future changes should be documentation, compatibility, or bug-fix updates unless a new major evaluation objective is explicitly introduced.
-
 
 ## Five-minute reviewer tour
 
