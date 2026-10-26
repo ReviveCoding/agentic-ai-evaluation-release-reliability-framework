@@ -33,7 +33,7 @@ gpu = [
   "accelerate>=0.29,<2"
 ]
 dense = [
-  "sentence-transformers>=3.0,<6"
+  "sentence-transformers>=3.0,<7"
 ]
 
 [tool.setuptools]
