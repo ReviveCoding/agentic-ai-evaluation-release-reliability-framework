@@ -29,7 +29,7 @@ dev = [
 ]
 gpu = [
   "transformers>=4.40,<6",
-  "datasets>=2.18,<5",
+  "datasets>=2.18,<6",
   "accelerate>=0.29,<2"
 ]
 dense = [
