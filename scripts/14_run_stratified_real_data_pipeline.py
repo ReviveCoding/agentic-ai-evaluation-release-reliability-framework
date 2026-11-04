@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
@@ -19,7 +19,9 @@ def main() -> None:
         description="Run stratified SGD build, model training, ID evaluation, and official dev/test OOD evaluation."
     )
     parser.add_argument("--raw-dir", required=True)
-    parser.add_argument("--backend", choices=["sklearn", "transformer"], default="sklearn")
+    parser.add_argument(
+        "--backend", choices=["sklearn", "transformer"], default="sklearn"
+    )
     parser.add_argument("--model-name", default="distilbert-base-uncased")
     parser.add_argument("--max-dialogues", type=int, default=250)
     parser.add_argument("--max-ood-dialogues", type=int, default=250)
@@ -33,18 +35,27 @@ def main() -> None:
 
     run(
         "scripts/12_build_stratified_sgd.py",
-        "--raw-dir", args.raw_dir,
-        "--max-dialogues", str(args.max_dialogues),
-        "--max-ood-dialogues", str(args.max_ood_dialogues),
-        "--minimum-rows-per-label", str(args.minimum_rows_per_label),
+        "--raw-dir",
+        args.raw_dir,
+        "--max-dialogues",
+        str(args.max_dialogues),
+        "--max-ood-dialogues",
+        str(args.max_ood_dialogues),
+        "--minimum-rows-per-label",
+        str(args.minimum_rows_per_label),
     )
     train_args = [
         "scripts/02_train_model.py",
-        "--backend", args.backend,
-        "--model-name", args.model_name,
-        "--epochs", str(args.epochs),
-        "--batch-size", str(args.batch_size),
-        "--gradient-accumulation-steps", str(args.gradient_accumulation_steps),
+        "--backend",
+        args.backend,
+        "--model-name",
+        args.model_name,
+        "--epochs",
+        str(args.epochs),
+        "--batch-size",
+        str(args.batch_size),
+        "--gradient-accumulation-steps",
+        str(args.gradient_accumulation_steps),
     ]
     if args.gradient_checkpointing:
         train_args.append("--gradient-checkpointing")

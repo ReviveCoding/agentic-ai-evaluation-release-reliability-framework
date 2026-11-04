@@ -6,12 +6,13 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-
 SGD_ZIP_URL = "https://github.com/google-research-datasets/dstc8-schema-guided-dialogue/archive/refs/heads/master.zip"
 EXPECTED_SPLITS = ("train", "dev", "test")
 
 
-def normalize_extracted_sgd(extract_root: str | Path, target_raw_dir: str | Path = "data/raw/sgd") -> Path:
+def normalize_extracted_sgd(
+    extract_root: str | Path, target_raw_dir: str | Path = "data/raw/sgd"
+) -> Path:
     """Normalize the downloaded SGD repository into the framework raw layout.
 
     Expected output:
@@ -42,7 +43,10 @@ def normalize_extracted_sgd(extract_root: str | Path, target_raw_dir: str | Path
     return target
 
 
-def download_sgd(out_dir: str | Path = "data/raw/sgd", cache_dir: str | Path = "data/raw/sgd_download") -> Path:
+def download_sgd(
+    out_dir: str | Path = "data/raw/sgd",
+    cache_dir: str | Path = "data/raw/sgd_download",
+) -> Path:
     """Download and normalize the public SGD repository.
 
     The default pipeline does not require network access because sample SGD-style

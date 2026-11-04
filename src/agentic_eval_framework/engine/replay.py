@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import asyncio
-from collections import Counter
 import math
-from pathlib import Path
 import random
+from collections import Counter
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -44,7 +44,11 @@ def _set_replay_determinism(seed: int = 42) -> None:
 
 
 def _stable_scores(scores: dict[str, Any]) -> dict[str, Any]:
-    return {key: value for key, value in scores.items() if key not in NONDETERMINISTIC_SCORE_KEYS}
+    return {
+        key: value
+        for key, value in scores.items()
+        if key not in NONDETERMINISTIC_SCORE_KEYS
+    }
 
 
 def _step_signature(run: dict[str, Any]) -> list[dict[str, Any]]:
@@ -73,26 +77,38 @@ def _equivalent(left: Any, right: Any) -> bool:
     if isinstance(left, bool) or isinstance(right, bool):
         return left == right
     if isinstance(left, (int, float)) and isinstance(right, (int, float)):
-        return math.isclose(float(left), float(right), rel_tol=FLOAT_REL_TOL, abs_tol=FLOAT_ABS_TOL)
+        return math.isclose(
+            float(left), float(right), rel_tol=FLOAT_REL_TOL, abs_tol=FLOAT_ABS_TOL
+        )
     if isinstance(left, dict) and isinstance(right, dict):
         if set(left) != set(right):
             return False
         return all(_equivalent(left[key], right[key]) for key in left)
     if isinstance(left, (list, tuple)) and isinstance(right, (list, tuple)):
-        return len(left) == len(right) and all(_equivalent(a, b) for a, b in zip(left, right))
+        return len(left) == len(right) and all(
+            _equivalent(a, b) for a, b in zip(left, right)
+        )
     return left == right
 
 
-def _compare_replay(original: dict[str, Any], replayed: dict[str, Any]) -> dict[str, Any]:
+def _compare_replay(
+    original: dict[str, Any], replayed: dict[str, Any]
+) -> dict[str, Any]:
     replay_mode = str(replayed.get("replay_mode", "execution_only"))
     original_fp = original.get("model_fingerprint")
     replay_fp = replayed.get("model_fingerprint")
     checks: dict[str, bool] = {
-        "predicted_tools_match": original.get("predicted_tools") == replayed.get("predicted_tools"),
-        "release_decision_match": original.get("release_decision") == replayed.get("release_decision"),
-        "failure_type_match": original.get("failure_type") == replayed.get("failure_type"),
-        "completion_suppressed_match": original.get("completion_suppressed") == replayed.get("completion_suppressed"),
-        "stable_step_signature_match": _equivalent(_step_signature(original), _step_signature(replayed)),
+        "predicted_tools_match": original.get("predicted_tools")
+        == replayed.get("predicted_tools"),
+        "release_decision_match": original.get("release_decision")
+        == replayed.get("release_decision"),
+        "failure_type_match": original.get("failure_type")
+        == replayed.get("failure_type"),
+        "completion_suppressed_match": original.get("completion_suppressed")
+        == replayed.get("completion_suppressed"),
+        "stable_step_signature_match": _equivalent(
+            _step_signature(original), _step_signature(replayed)
+        ),
         "stable_scores_match": _equivalent(
             _stable_scores(original.get("scores", {})),
             _stable_scores(replayed.get("scores", {})),
@@ -132,13 +148,19 @@ async def _reexecute_runs(
                 and original.get("model_fingerprint") == engine.policy.model_fingerprint
             )
             predicted_tools = original.get("predicted_tools") or []
-            predicted_first = None if can_repredict else (predicted_tools[0] if predicted_tools else None)
+            predicted_first = (
+                None
+                if can_repredict
+                else (predicted_tools[0] if predicted_tools else None)
+            )
             rerun = await engine.run_scenario(
                 scenario,
                 predicted_first=predicted_first,
                 variant=variant,
             )
-            rerun["replay_mode"] = "full_policy_reexecution" if can_repredict else "execution_only"
+            rerun["replay_mode"] = (
+                "full_policy_reexecution" if can_repredict else "execution_only"
+            )
             replayed.append(rerun)
     finally:
         engine.close()
@@ -168,7 +190,12 @@ def replay_failed_runs(
             temp_db.unlink()
         reruns = asyncio.run(
             _reexecute_runs(
-                failed, model_dir, temp_db, release_gates_path, max_retries, service_docs_path
+                failed,
+                model_dir,
+                temp_db,
+                release_gates_path,
+                max_retries,
+                service_docs_path,
             )
         )
         if temp_db.exists():
@@ -218,12 +245,16 @@ def replay_failed_runs(
             )
         replay.append(item)
 
-    verified_count = sum(bool(item.get("replay_verified")) for item in replay) if reexecute else 0
+    verified_count = (
+        sum(bool(item.get("replay_verified")) for item in replay) if reexecute else 0
+    )
     mode_summary = {
         mode: {
             "count": mode_totals[mode],
             "verified": mode_verified[mode],
-            "verification_rate": mode_verified[mode] / mode_totals[mode] if mode_totals[mode] else None,
+            "verification_rate": mode_verified[mode] / mode_totals[mode]
+            if mode_totals[mode]
+            else None,
         }
         for mode in sorted(mode_totals)
     }
@@ -231,7 +262,9 @@ def replay_failed_runs(
         "num_failed_or_review_runs": len(replay),
         "reexecution_enabled": reexecute,
         "num_replay_verified": verified_count,
-        "replay_verification_rate": verified_count / len(replay) if replay and reexecute else (1.0 if reexecute else None),
+        "replay_verification_rate": verified_count / len(replay)
+        if replay and reexecute
+        else (1.0 if reexecute else None),
         "mode_summary": mode_summary,
         "mismatch_counts": dict(mismatch_counts.most_common()),
         "float_abs_tolerance": FLOAT_ABS_TOL,

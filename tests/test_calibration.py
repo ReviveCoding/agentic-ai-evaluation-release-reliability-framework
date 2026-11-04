@@ -1,6 +1,9 @@
 import numpy as np
 
-from agentic_eval_framework.models.calibration import expected_calibration_error, multiclass_brier_score
+from agentic_eval_framework.models.calibration import (
+    expected_calibration_error,
+    multiclass_brier_score,
+)
 
 
 def test_calibration_metrics_are_zero_for_perfect_confident_predictions():

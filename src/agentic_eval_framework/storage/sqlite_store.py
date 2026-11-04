@@ -8,7 +8,6 @@ from typing import Any
 
 from agentic_eval_framework.utils.trace_integrity import verify_trace_fingerprint
 
-
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS runs (
     run_id TEXT PRIMARY KEY,
@@ -46,7 +45,9 @@ CREATE INDEX IF NOT EXISTS idx_steps_run ON steps(run_id);
 
 
 class SQLiteTraceStore:
-    def __init__(self, db_path: str | Path = "outputs/traces.sqlite", commit_every: int = 1) -> None:
+    def __init__(
+        self, db_path: str | Path = "outputs/traces.sqlite", commit_every: int = 1
+    ) -> None:
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
@@ -61,28 +62,51 @@ class SQLiteTraceStore:
     def upsert_run(self, run: dict[str, Any]) -> None:
         with self._lock:
             self.conn.execute("DELETE FROM steps WHERE run_id = ?", (run["run_id"],))
-            self.conn.execute("DELETE FROM tool_calls WHERE run_id = ?", (run["run_id"],))
-            self.conn.execute("DELETE FROM evaluator_scores WHERE run_id = ?", (run["run_id"],))
+            self.conn.execute(
+                "DELETE FROM tool_calls WHERE run_id = ?", (run["run_id"],)
+            )
+            self.conn.execute(
+                "DELETE FROM evaluator_scores WHERE run_id = ?", (run["run_id"],)
+            )
             self.conn.execute(
                 "REPLACE INTO runs VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (
-                    run["run_id"], run["scenario_id"], run.get("status"),
-                    run.get("release_decision"), run.get("failure_type"),
-                    run.get("latency_ms", 0.0), json.dumps(run, ensure_ascii=False),
+                    run["run_id"],
+                    run["scenario_id"],
+                    run.get("status"),
+                    run.get("release_decision"),
+                    run.get("failure_type"),
+                    run.get("latency_ms", 0.0),
+                    json.dumps(run, ensure_ascii=False),
                 ),
             )
             for step in run.get("steps", []):
                 self.conn.execute(
                     "REPLACE INTO steps VALUES (?, ?, ?, ?, ?)",
-                    (run["run_id"], step["step_id"], step.get("predicted_tool"), step.get("latency_ms", 0.0), json.dumps(step, ensure_ascii=False)),
+                    (
+                        run["run_id"],
+                        step["step_id"],
+                        step.get("predicted_tool"),
+                        step.get("latency_ms", 0.0),
+                        json.dumps(step, ensure_ascii=False),
+                    ),
                 )
                 obs = step.get("observation", {})
                 self.conn.execute(
                     "INSERT INTO tool_calls VALUES (?, ?, ?, ?, ?)",
-                    (run["run_id"], step["step_id"], step.get("predicted_tool"), obs.get("evidence_id"), json.dumps(obs, ensure_ascii=False)),
+                    (
+                        run["run_id"],
+                        step["step_id"],
+                        step.get("predicted_tool"),
+                        obs.get("evidence_id"),
+                        json.dumps(obs, ensure_ascii=False),
+                    ),
                 )
             for name, score in run.get("scores", {}).items():
-                self.conn.execute("INSERT INTO evaluator_scores VALUES (?, ?, ?)", (run["run_id"], name, float(score)))
+                self.conn.execute(
+                    "INSERT INTO evaluator_scores VALUES (?, ?, ?)",
+                    (run["run_id"], name, float(score)),
+                )
             self._pending += 1
             if self._pending >= self.commit_every:
                 self._flush_unlocked()
@@ -98,16 +122,19 @@ class SQLiteTraceStore:
 
     def get_run(self, run_id: str) -> dict[str, Any] | None:
         with self._lock:
-            cur = self.conn.execute("SELECT payload_json FROM runs WHERE run_id = ?", (run_id,))
+            cur = self.conn.execute(
+                "SELECT payload_json FROM runs WHERE run_id = ?", (run_id,)
+            )
             row = cur.fetchone()
         return json.loads(row[0]) if row else None
 
     def list_failed_runs(self) -> list[dict[str, Any]]:
         with self._lock:
-            cur = self.conn.execute("SELECT payload_json FROM runs WHERE release_decision != 'PASS'")
+            cur = self.conn.execute(
+                "SELECT payload_json FROM runs WHERE release_decision != 'PASS'"
+            )
             rows = cur.fetchall()
         return [json.loads(row[0]) for row in rows]
-
 
     def integrity_check(self) -> str:
         with self._lock:
@@ -118,7 +145,6 @@ class SQLiteTraceStore:
         with self._lock:
             row = self.conn.execute("SELECT COUNT(*) FROM runs").fetchone()
         return int(row[0]) if row else 0
-
 
     def payload_integrity_summary(self, limit: int | None = None) -> dict[str, int]:
         with self._lock:
@@ -139,7 +165,12 @@ class SQLiteTraceStore:
                 valid += 1
             else:
                 invalid += 1
-        return {"checked": len(rows), "valid": valid, "invalid": invalid, "missing": missing}
+        return {
+            "checked": len(rows),
+            "valid": valid,
+            "invalid": invalid,
+            "missing": missing,
+        }
 
     def close(self) -> None:
         with self._lock:
@@ -148,7 +179,7 @@ class SQLiteTraceStore:
                 self.conn.close()
                 self.conn = None  # type: ignore[assignment]
 
-    def __enter__(self) -> "SQLiteTraceStore":
+    def __enter__(self) -> SQLiteTraceStore:
         return self
 
     def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> None:

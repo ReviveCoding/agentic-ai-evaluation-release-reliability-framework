@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 SRC_DIR = ROOT_DIR / "src"
@@ -14,7 +14,9 @@ from agentic_eval_framework.retrieval.evaluate_retrieval import evaluate_retriev
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Evaluate recency/tool-filtered retrieval and the lightweight reranker.")
+    parser = argparse.ArgumentParser(
+        description="Evaluate recency/tool-filtered retrieval and the lightweight reranker."
+    )
     parser.add_argument("--processed-dir", default="data/processed")
     parser.add_argument("--outputs-dir", default="outputs")
     parser.add_argument("--top-k", type=int, default=5)
@@ -39,7 +41,9 @@ def main() -> None:
             top_k=args.top_k,
             query_mode="recency_weighted",
         )
-    (outputs / "retrieval_top1_summary.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    (outputs / "retrieval_top1_summary.json").write_text(
+        json.dumps(result, indent=2), encoding="utf-8"
+    )
     print(json.dumps(result, indent=2))
 
 

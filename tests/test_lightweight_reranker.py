@@ -3,7 +3,10 @@ from __future__ import annotations
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 
-from agentic_eval_framework.retrieval.top1_reranker import FEATURE_NAMES, LightweightIntentReranker
+from agentic_eval_framework.retrieval.top1_reranker import (
+    FEATURE_NAMES,
+    LightweightIntentReranker,
+)
 
 
 def test_lightweight_reranker_returns_positive_probability():

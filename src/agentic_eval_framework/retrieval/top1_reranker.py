@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import math
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 import joblib
 import numpy as np
@@ -14,11 +15,30 @@ from agentic_eval_framework.retrieval.bm25_retriever import tokenize
 
 CAMEL_RE = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
 TERMINAL_CUES = {
-    "all", "done", "goodbye", "bye", "nothing", "thanks", "thank", "cancel", "later",
+    "all",
+    "done",
+    "goodbye",
+    "bye",
+    "nothing",
+    "thanks",
+    "thank",
+    "cancel",
+    "later",
 }
 ACTION_CUES = {
-    "book", "buy", "create", "find", "get", "lookup", "play", "rent", "reserve", "search",
-    "schedule", "transfer", "weather",
+    "book",
+    "buy",
+    "create",
+    "find",
+    "get",
+    "lookup",
+    "play",
+    "rent",
+    "reserve",
+    "search",
+    "schedule",
+    "transfer",
+    "weather",
 }
 FEATURE_NAMES = [
     "fused_score",
@@ -46,8 +66,6 @@ def service_base(service: str) -> str:
     return str(service or "").split("_")[0].lower()
 
 
-
-
 def infer_query_tool(text: str) -> str | None:
     tokens = set(tokenize(text))
     if tokens & {"weather", "forecast", "rain", "wind", "humidity", "temperature"}:
@@ -55,6 +73,7 @@ def infer_query_tool(text: str) -> str | None:
     if tokens & {"movie", "media", "music", "song", "album", "watch", "listen", "play"}:
         return "media_search"
     return None
+
 
 def doc_tool_label(doc: dict[str, Any]) -> str:
     return service_to_tool(
@@ -119,7 +138,7 @@ class LightweightIntentReranker:
     feature_names: list[str]
 
     @classmethod
-    def load(cls, path: str | Path) -> "LightweightIntentReranker | None":
+    def load(cls, path: str | Path) -> LightweightIntentReranker | None:
         artifact = Path(path)
         if not artifact.exists():
             return None

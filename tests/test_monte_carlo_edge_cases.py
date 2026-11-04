@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections import Counter
 
 from agentic_eval_framework.simulation.monte_carlo import (
-    MonteCarloConfig,
     SERVICE_SPECS,
+    MonteCarloConfig,
     build_monte_carlo_data,
     make_monte_carlo_scenarios,
 )
@@ -29,7 +29,9 @@ def test_monte_carlo_generates_exact_non_divisible_count(tmp_path):
     by_rep = Counter(s["replication_id"] for s in scenarios)
     assert set(by_rep.values()) == {10}
     for rep in by_rep:
-        counts = Counter(s["difficulty"] for s in scenarios if s["replication_id"] == rep)
+        counts = Counter(
+            s["difficulty"] for s in scenarios if s["replication_id"] == rep
+        )
         assert max(counts.values()) - min(counts.values()) <= 1
 
 

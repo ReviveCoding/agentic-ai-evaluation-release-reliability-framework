@@ -2,22 +2,26 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 SRC_DIR = ROOT_DIR / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from agentic_eval_framework.data.build_golden_trajectories import build_golden_trajectories
+from agentic_eval_framework.data.build_golden_trajectories import (
+    build_golden_trajectories,
+)
 from agentic_eval_framework.data.dataset_contract import validate_sgd_raw_dataset
 from agentic_eval_framework.data.sgd_stratified import (
     audit_raw_mapping,
     build_service_docs_from_training_rows,
     build_stratified_sgd_datasets,
 )
-from agentic_eval_framework.reporting.data_validation_report import export_data_validation_report
+from agentic_eval_framework.reporting.data_validation_report import (
+    export_data_validation_report,
+)
 from agentic_eval_framework.reporting.dataset_card import export_dataset_card
 
 
@@ -51,6 +55,7 @@ def main() -> None:
         minimum_rows_per_label=args.minimum_rows_per_label,
     )
     from agentic_eval_framework.utils.io import read_jsonl
+
     build_service_docs_from_training_rows(
         args.raw_dir,
         read_jsonl(processed / "tool_policy_train.jsonl"),
@@ -72,7 +77,9 @@ def main() -> None:
         processed / "tool_policy_eval.jsonl",
     )
     if validation["status"] != "PASS":
-        raise SystemExit(f"Processed dataset validation failed: {validation['reasons']}")
+        raise SystemExit(
+            f"Processed dataset validation failed: {validation['reasons']}"
+        )
     print(json.dumps({"status": "PASS", "manifest": manifest}, indent=2))
 
 

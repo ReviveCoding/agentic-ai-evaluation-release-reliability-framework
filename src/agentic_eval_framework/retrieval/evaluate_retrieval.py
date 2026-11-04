@@ -3,7 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from agentic_eval_framework.retrieval.hierarchical_retriever import HierarchicalBM25Retriever
+from agentic_eval_framework.retrieval.hierarchical_retriever import (
+    HierarchicalBM25Retriever,
+)
 from agentic_eval_framework.retrieval.recency_query import current_utterance
 from agentic_eval_framework.retrieval.targets import (
     build_retrieval_query,
@@ -22,7 +24,9 @@ def evaluate_retrieval(
 ) -> dict[str, Any]:
     scenarios = read_jsonl(scenarios_path)
     docs = read_jsonl(docs_path)
-    evidence_docs = [doc for doc in docs if doc.get("doc_type") in {"service", "intent"}]
+    evidence_docs = [
+        doc for doc in docs if doc.get("doc_type") in {"service", "intent"}
+    ]
     retriever = HierarchicalBM25Retriever(evidence_docs)
     available_ids = {str(doc.get("doc_id")) for doc in evidence_docs}
     strict_hits = compatible_hits = strict_top1 = compatible_top1 = 0
@@ -34,7 +38,13 @@ def evaluate_retrieval(
         scenario
         for scenario in scenarios
         if (scenario.get("expected_tools") or [""])[0]
-        in {"search_places", "calendar_lookup", "media_search", "weather_lookup", "search_docs"}
+        in {
+            "search_places",
+            "calendar_lookup",
+            "media_search",
+            "weather_lookup",
+            "search_docs",
+        }
     ]
 
     for scenario in retrieval_scenarios:
@@ -53,7 +63,9 @@ def evaluate_retrieval(
         compatible.add(target)
         ids = [str(result["doc_id"]) for result in results]
         strict_rank = ids.index(target) + 1 if target in ids else None
-        compatible_ranks = [index + 1 for index, doc_id in enumerate(ids) if doc_id in compatible]
+        compatible_ranks = [
+            index + 1 for index, doc_id in enumerate(ids) if doc_id in compatible
+        ]
         strict_hits += int(strict_rank is not None)
         compatible_hits += int(bool(compatible_ranks))
         strict_top1 += int(bool(ids) and ids[0] == target)

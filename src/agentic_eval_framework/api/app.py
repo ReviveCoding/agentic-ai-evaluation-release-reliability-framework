@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 import os
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
 
 from fastapi import FastAPI, HTTPException, Request
 
 from agentic_eval_framework import __version__
-from agentic_eval_framework.api.schemas import HealthResponse, ReadyResponse, RunResponse, ScenarioRequest
+from agentic_eval_framework.api.schemas import (
+    HealthResponse,
+    ReadyResponse,
+    RunResponse,
+    ScenarioRequest,
+)
 from agentic_eval_framework.data.build_golden_trajectories import expected_tools_for_row
 from agentic_eval_framework.data.build_tool_policy_dataset import service_to_tool
 from agentic_eval_framework.engine.execution_engine import AgenticExecutionEngine
@@ -19,8 +24,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     engine = AgenticExecutionEngine(
         model_dir=os.getenv("AGENTIC_MODEL_DIR", "models/tool_policy"),
         db_path=os.getenv("AGENTIC_TRACE_DB", "outputs/api_traces.sqlite"),
-        release_gates_path=os.getenv("AGENTIC_RELEASE_GATES", "configs/release_gates.yaml"),
-        service_docs_path=os.getenv("AGENTIC_SERVICE_DOCS", "data/processed/service_docs.jsonl"),
+        release_gates_path=os.getenv(
+            "AGENTIC_RELEASE_GATES", "configs/release_gates.yaml"
+        ),
+        service_docs_path=os.getenv(
+            "AGENTIC_SERVICE_DOCS", "data/processed/service_docs.jsonl"
+        ),
     )
     app.state.engine = engine
     try:
@@ -29,13 +38,17 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         engine.close()
 
 
-app = FastAPI(title="Agentic Evaluation Framework", version=__version__, lifespan=lifespan)
+app = FastAPI(
+    title="Agentic Evaluation Framework", version=__version__, lifespan=lifespan
+)
 
 
 def _engine(request: Request) -> AgenticExecutionEngine:
     engine = getattr(request.app.state, "engine", None)
     if engine is None:
-        raise HTTPException(status_code=503, detail="Execution engine is not initialized")
+        raise HTTPException(
+            status_code=503, detail="Execution engine is not initialized"
+        )
     return engine
 
 
@@ -64,7 +77,9 @@ def ready(request: Request) -> ReadyResponse:
     trace_integrity = engine.store.payload_integrity_summary(limit=1000)
     model_loaded = engine.policy.backend == "rule" or engine.policy.model_dir.exists()
     payload_ok = trace_integrity["invalid"] == 0 and trace_integrity["missing"] == 0
-    ready_status = "ready" if integrity == "ok" and model_loaded and payload_ok else "not_ready"
+    ready_status = (
+        "ready" if integrity == "ok" and model_loaded and payload_ok else "not_ready"
+    )
     return ReadyResponse(
         status=ready_status,
         database_integrity=integrity,
@@ -78,10 +93,14 @@ def ready(request: Request) -> ReadyResponse:
 @app.post("/runs", response_model=RunResponse)
 async def create_run(req: ScenarioRequest, request: Request) -> RunResponse:
     inferred_first = service_to_tool(req.service, req.intent, req.missing_slots)
-    expected_tools = req.expected_tools or expected_tools_for_row({"tool_label": inferred_first})
+    expected_tools = req.expected_tools or expected_tools_for_row(
+        {"tool_label": inferred_first}
+    )
     _validate_tools(expected_tools)
     _validate_tools(req.must_not_tools)
-    gate_expected = req.release_gate_expected or ("REVIEW" if inferred_first in {"safety_check", "calendar_write"} else "PASS")
+    gate_expected = req.release_gate_expected or (
+        "REVIEW" if inferred_first in {"safety_check", "calendar_write"} else "PASS"
+    )
     scenario = {
         "scenario_id": req.scenario_id,
         "user_request": req.user_request,
@@ -93,7 +112,9 @@ async def create_run(req: ScenarioRequest, request: Request) -> RunResponse:
         "risk_flags": req.risk_flags,
         "must_not_tools": req.must_not_tools,
         "expected_tools": expected_tools,
-        "oracle_source": "request" if req.expected_tools is not None else "inferred_schema_mapping",
+        "oracle_source": "request"
+        if req.expected_tools is not None
+        else "inferred_schema_mapping",
         "release_gate_expected": gate_expected,
     }
     run = await _engine(request).run_scenario(scenario, variant="api")

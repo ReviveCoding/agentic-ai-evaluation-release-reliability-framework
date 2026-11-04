@@ -4,7 +4,6 @@ from typing import Any
 
 from agentic_eval_framework.utils.fingerprints import stable_json_hash
 
-
 TRACE_HASH_FIELD = "trace_fingerprint"
 
 

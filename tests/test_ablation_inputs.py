@@ -1,6 +1,5 @@
 from agentic_eval_framework.models.ablation import build_ablation_text
 
-
 ROW = {
     "dialogue_context": "[SYSTEM] how can I help",
     "user_utterance": "book a meeting tomorrow",

@@ -3,9 +3,10 @@ from __future__ import annotations
 import hashlib
 import json
 import platform
+from collections.abc import Iterable
 from importlib import metadata
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 
 def sha256_file(path: str | Path) -> str:
@@ -29,7 +30,9 @@ def sha256_paths(paths: Iterable[str | Path]) -> str:
 
 
 def stable_json_hash(payload: Any) -> str:
-    raw = json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    raw = json.dumps(
+        payload, sort_keys=True, ensure_ascii=False, separators=(",", ":")
+    ).encode("utf-8")
     return hashlib.sha256(raw).hexdigest()
 
 

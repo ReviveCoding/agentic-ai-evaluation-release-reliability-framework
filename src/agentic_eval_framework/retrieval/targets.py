@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from agentic_eval_framework.retrieval.recency_query import recency_weighted_query
 
@@ -17,16 +18,24 @@ def intent_doc_id(service: str, intent: str) -> str:
     return f"intent::{service}::{intent}"
 
 
-def target_doc_id(payload: dict[str, Any], available_doc_ids: set[str] | None = None) -> str:
+def target_doc_id(
+    payload: dict[str, Any], available_doc_ids: set[str] | None = None
+) -> str:
     service = str(payload.get("service", ""))
     intent = str(payload.get("intent", ""))
-    candidate = intent_doc_id(service, intent) if service and intent else service_doc_id(service)
+    candidate = (
+        intent_doc_id(service, intent)
+        if service and intent
+        else service_doc_id(service)
+    )
     if available_doc_ids is None or candidate in available_doc_ids:
         return candidate
     return service_doc_id(service)
 
 
-def compatible_doc_ids(payload: dict[str, Any], docs: Iterable[dict[str, Any]]) -> set[str]:
+def compatible_doc_ids(
+    payload: dict[str, Any], docs: Iterable[dict[str, Any]]
+) -> set[str]:
     """Return semantically compatible evidence IDs without affecting ranking.
 
     SGD service versions such as Hotels_1 and Hotels_4 can expose the same
@@ -45,12 +54,16 @@ def compatible_doc_ids(payload: dict[str, Any], docs: Iterable[dict[str, Any]]) 
             continue
         doc_type = str(doc.get("doc_type", ""))
         doc_intent = str(doc.get("intent", ""))
-        if doc_type == "service" or (doc_type == "intent" and doc_intent == expected_intent):
+        if doc_type == "service" or (
+            doc_type == "intent" and doc_intent == expected_intent
+        ):
             compatible.add(str(doc.get("doc_id", "")))
     return {doc_id for doc_id in compatible if doc_id}
 
 
-def build_retrieval_query(payload: dict[str, Any], mode: str = "recency_weighted") -> str:
+def build_retrieval_query(
+    payload: dict[str, Any], mode: str = "recency_weighted"
+) -> str:
     if mode == "recency_weighted":
         return recency_weighted_query(payload)
     parts = [
@@ -59,7 +72,9 @@ def build_retrieval_query(payload: dict[str, Any], mode: str = "recency_weighted
     ]
     known_slots = payload.get("known_slots", {}) or {}
     if isinstance(known_slots, dict):
-        parts.extend(str(value) for value in known_slots.values() if value not in (None, ""))
+        parts.extend(
+            str(value) for value in known_slots.values() if value not in (None, "")
+        )
     if mode == "metadata_enriched":
         parts.extend(
             [
