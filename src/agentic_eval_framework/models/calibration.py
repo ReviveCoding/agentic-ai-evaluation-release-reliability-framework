@@ -3,7 +3,9 @@ from __future__ import annotations
 import numpy as np
 
 
-def expected_calibration_error(probabilities: np.ndarray, y_true: np.ndarray, n_bins: int = 10) -> float:
+def expected_calibration_error(
+    probabilities: np.ndarray, y_true: np.ndarray, n_bins: int = 10
+) -> float:
     """Multiclass ECE using maximum predicted probability and correctness."""
     if len(y_true) == 0:
         return 0.0
@@ -14,10 +16,14 @@ def expected_calibration_error(probabilities: np.ndarray, y_true: np.ndarray, n_
     ece = 0.0
     for i in range(n_bins):
         left, right = edges[i], edges[i + 1]
-        mask = (confidences >= left) & ((confidences < right) if i < n_bins - 1 else (confidences <= right))
+        mask = (confidences >= left) & (
+            (confidences < right) if i < n_bins - 1 else (confidences <= right)
+        )
         if not np.any(mask):
             continue
-        ece += float(mask.mean()) * abs(float(correctness[mask].mean()) - float(confidences[mask].mean()))
+        ece += float(mask.mean()) * abs(
+            float(correctness[mask].mean()) - float(confidences[mask].mean())
+        )
     return float(ece)
 
 
@@ -46,13 +52,34 @@ def select_confidence_threshold(
     confidences = probabilities.max(axis=1)
     predictions = probabilities.argmax(axis=1)
     correctness = (predictions == y_true).astype(float)
-    candidates = sorted(set([0.0, 1.0, *[float(x) for x in confidences]]))
+    candidate_thresholds = [0.0, 1.0, *[float(x) for x in confidences]]
+    candidates = sorted(set(candidate_thresholds))
+    order = np.argsort(confidences, kind="stable")
+    sorted_confidences = confidences[order]
+    correct_prefix = np.concatenate(([0.0], np.cumsum(correctness[order])))
+    finite_confidences = bool(np.isfinite(confidences).all())
     feasible: list[tuple[float, float, float]] = []
     all_points: list[tuple[float, float, float]] = []
     for threshold in candidates:
-        mask = confidences >= threshold
-        coverage = float(mask.mean())
-        accuracy = float(correctness[mask].mean()) if np.any(mask) else 0.0
+        if finite_confidences:
+            first_accepted = int(
+                np.searchsorted(sorted_confidences, threshold, side="left")
+            )
+            accepted_count = len(y_true) - first_accepted
+            coverage = accepted_count / len(y_true)
+            accuracy = (
+                float(
+                    (correct_prefix[-1] - correct_prefix[first_accepted])
+                    / accepted_count
+                )
+                if accepted_count
+                else 0.0
+            )
+        else:
+            # Retain existing comparison behavior for nonfinite caller inputs.
+            mask = confidences >= threshold
+            coverage = float(mask.mean())
+            accuracy = float(correctness[mask].mean()) if np.any(mask) else 0.0
         point = (threshold, coverage, accuracy)
         all_points.append(point)
         if coverage >= min_coverage and accuracy >= target_accuracy:
@@ -60,7 +87,9 @@ def select_confidence_threshold(
     if feasible:
         threshold, coverage, accuracy = min(feasible, key=lambda x: x[0])
     else:
-        threshold, coverage, accuracy = max(all_points, key=lambda x: (x[2], x[1], -x[0]))
+        threshold, coverage, accuracy = max(
+            all_points, key=lambda x: (x[2], x[1], -x[0])
+        )
     return {
         "threshold": float(threshold),
         "coverage": float(coverage),
