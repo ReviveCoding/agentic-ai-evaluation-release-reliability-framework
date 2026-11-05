@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from agentic_eval_framework.retrieval.hierarchical_retriever import HierarchicalBM25Retriever
+from agentic_eval_framework.retrieval.hierarchical_retriever import (
+    HierarchicalBM25Retriever,
+)
 from agentic_eval_framework.retrieval.recency_query import recency_weighted_query
 
 
@@ -56,6 +58,7 @@ def test_predicted_tool_filter_and_current_turn_rank_weather_first():
     assert results[0]["service"] == "Weather_1"
     assert results[0]["tool_compatible"] is True
 
+
 class _ToolPriorOnlyReranker:
     """A fake reranker that would select the predicted-tool candidate if active."""
 
@@ -78,6 +81,7 @@ def test_conflicting_current_query_disables_predicted_tool_prior():
     assert results[0]["service"] == "Weather_1"
     assert results[0]["tool_filter_active"] is False
     assert all(result["tool_compatible"] is False for result in results)
+
 
 class _HostilePredictedToolReranker:
     # Scores the stale predicted-tool feature above every query signal.

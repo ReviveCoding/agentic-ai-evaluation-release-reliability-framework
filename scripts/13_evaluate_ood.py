@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 SRC_DIR = ROOT_DIR / "src"
@@ -15,7 +15,9 @@ from agentic_eval_framework.models.evaluate_tool_policy import evaluate_policies
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Evaluate the trained policy on official SGD OOD dev/test splits.")
+    parser = argparse.ArgumentParser(
+        description="Evaluate the trained policy on official SGD OOD dev/test splits."
+    )
     parser.add_argument("--processed-dir", default="data/processed")
     parser.add_argument("--model-dir", default="models/tool_policy")
     parser.add_argument("--outputs-dir", default="outputs")
@@ -45,7 +47,9 @@ def main() -> None:
             "classification": classification,
             "agentic_aggregate": agent["aggregate"],
         }
-    (outputs / "ood_summary.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    (outputs / "ood_summary.json").write_text(
+        json.dumps(result, indent=2), encoding="utf-8"
+    )
     print(json.dumps(result, indent=2))
 
 

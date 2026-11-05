@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import inspect
-
 import argparse
+import inspect
 import json
 import random
 from pathlib import Path
@@ -85,7 +84,9 @@ def train_sklearn(
 
     vectorizer = TfidfVectorizer(ngram_range=(1, 2), min_df=1)
     Xtr = vectorizer.fit_transform(X_train)
-    base_clf = LogisticRegression(max_iter=1000, class_weight="balanced", random_state=seed)
+    base_clf = LogisticRegression(
+        max_iter=1000, class_weight="balanced", random_state=seed
+    )
     class_counts = {label: y_train.count(label) for label in set(y_train)}
     min_class_count = min(class_counts.values()) if class_counts else 0
     calibrated = min_class_count >= 3 and len(class_counts) > 1
@@ -99,8 +100,12 @@ def train_sklearn(
 
     labels = list(clf.classes_)
     calibration_probabilities = clf.predict_proba(vectorizer.transform(X_calibration))
-    calibration_indices = np.asarray([labels.index(label) for label in y_calibration], dtype=int)
-    selective = select_confidence_threshold(calibration_probabilities, calibration_indices)
+    calibration_indices = np.asarray(
+        [labels.index(label) for label in y_calibration], dtype=int
+    )
+    selective = select_confidence_threshold(
+        calibration_probabilities, calibration_indices
+    )
     calibration_metrics = _classification_metrics(
         y_calibration, calibration_probabilities, labels
     )
@@ -128,7 +133,10 @@ def train_sklearn(
     joblib.dump(clf, out / "classifier.joblib")
     write_json(
         out / "model_meta.json",
-        {"backend": "sklearn", "label_to_id": {label: i for i, label in enumerate(labels)}},
+        {
+            "backend": "sklearn",
+            "label_to_id": {label: i for i, label in enumerate(labels)},
+        },
     )
     write_json(out / "metrics.json", metrics)
     write_model_manifest(
@@ -144,10 +152,10 @@ def train_sklearn(
             "classifier": "logistic_regression",
             "calibrated": calibrated,
             "threshold_selection_split": (
-            "eval_compatibility_fallback"
-            if Path(calibration_path).resolve() == Path(eval_path).resolve()
-            else "calibration"
-        ),
+                "eval_compatibility_fallback"
+                if Path(calibration_path).resolve() == Path(eval_path).resolve()
+                else "calibration"
+            ),
         },
         recommended_min_confidence=selective["threshold"],
     )
@@ -194,7 +202,10 @@ def train_transformer(
 
     def to_dataset(rows: list[dict[str, Any]]) -> Dataset:
         return Dataset.from_list(
-            [{"text": build_text(r), "label": label_to_id[r["tool_label"]]} for r in rows]
+            [
+                {"text": build_text(r), "label": label_to_id[r["tool_label"]]}
+                for r in rows
+            ]
         )
 
     def prepare(rows: list[dict[str, Any]]) -> Dataset:
@@ -263,7 +274,11 @@ def train_transformer(
         args=args,
         train_dataset=train_ds,
         eval_dataset=calibration_ds,
-        **({"processing_class": tokenizer} if "processing_class" in inspect.signature(Trainer.__init__).parameters else {"tokenizer": tokenizer}),
+        **(
+            {"processing_class": tokenizer}
+            if "processing_class" in inspect.signature(Trainer.__init__).parameters
+            else {"tokenizer": tokenizer}
+        ),
         data_collator=data_collator,
         compute_metrics=compute_metrics,
     )
@@ -277,7 +292,9 @@ def train_transformer(
         return probabilities, np.asarray(output.label_ids, dtype=int)
 
     calibration_probabilities, calibration_indices = probabilities_for(calibration_ds)
-    selective = select_confidence_threshold(calibration_probabilities, calibration_indices)
+    selective = select_confidence_threshold(
+        calibration_probabilities, calibration_indices
+    )
     calibration_labels = [labels[int(idx)] for idx in calibration_indices]
     calibration_metrics = _classification_metrics(
         calibration_labels, calibration_probabilities, labels
@@ -292,7 +309,9 @@ def train_transformer(
         "backend": "transformer",
         "model_name": model_name,
         "device": device,
-        "mixed_precision": "bf16" if bf16_enabled else ("fp16" if fp16_enabled else "fp32"),
+        "mixed_precision": "bf16"
+        if bf16_enabled
+        else ("fp16" if fp16_enabled else "fp32"),
         "gradient_accumulation_steps": max(1, int(gradient_accumulation_steps)),
         "gradient_checkpointing": bool(gradient_checkpointing),
         "threshold_selection_split": (
@@ -308,7 +327,9 @@ def train_transformer(
         "calibration_metrics": calibration_metrics,
         **final_metrics,
     }
-    write_json(out / "model_meta.json", {"backend": "transformer", "label_to_id": label_to_id})
+    write_json(
+        out / "model_meta.json", {"backend": "transformer", "label_to_id": label_to_id}
+    )
     write_json(out / "metrics.json", metrics)
     write_model_manifest(
         out,
@@ -326,10 +347,10 @@ def train_transformer(
             "gradient_checkpointing": bool(gradient_checkpointing),
             "mixed_precision": metrics["mixed_precision"],
             "threshold_selection_split": (
-            "eval_compatibility_fallback"
-            if Path(calibration_path).resolve() == Path(eval_path).resolve()
-            else "calibration"
-        ),
+                "eval_compatibility_fallback"
+                if Path(calibration_path).resolve() == Path(eval_path).resolve()
+                else "calibration"
+            ),
         },
         recommended_min_confidence=selective["threshold"],
     )
@@ -405,13 +426,17 @@ def train_tool_policy(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train-path", default="data/processed/tool_policy_train.jsonl")
+    parser.add_argument(
+        "--train-path", default="data/processed/tool_policy_train.jsonl"
+    )
     parser.add_argument(
         "--calibration-path", default="data/processed/tool_policy_calibration.jsonl"
     )
     parser.add_argument("--eval-path", default="data/processed/tool_policy_eval.jsonl")
     parser.add_argument("--out-dir", default="models/tool_policy")
-    parser.add_argument("--backend", choices=["sklearn", "transformer"], default="sklearn")
+    parser.add_argument(
+        "--backend", choices=["sklearn", "transformer"], default="sklearn"
+    )
     parser.add_argument("--model-name", default="distilbert-base-uncased")
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--batch-size", type=int, default=16)

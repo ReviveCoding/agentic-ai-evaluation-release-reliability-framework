@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from collections import Counter, defaultdict
-from dataclasses import dataclass
 import json
-from pathlib import Path
 import random
-from typing import Any, Iterable
+from collections import Counter, defaultdict
+from collections.abc import Iterable
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
 
 from agentic_eval_framework.data.build_tool_policy_dataset import (
     normalize_slot_values,
@@ -130,10 +131,14 @@ def build_dialogue_groups(
 
 def _rarity_scores(groups: list[DialogueGroup]) -> dict[str, float]:
     label_frequency = Counter(label for group in groups for label in group.labels)
-    service_frequency = Counter(service for group in groups for service in group.services)
+    service_frequency = Counter(
+        service for group in groups for service in group.services
+    )
     scores: dict[str, float] = {}
     for group in groups:
-        label_score = sum(1.0 / max(1, label_frequency[label]) for label in group.labels)
+        label_score = sum(
+            1.0 / max(1, label_frequency[label]) for label in group.labels
+        )
         service_score = sum(1.0 / max(1, service_frequency[s]) for s in group.services)
         scores[group.dialogue_id] = label_score + 0.25 * service_score
     return scores
@@ -210,7 +215,9 @@ def stratified_group_split(
     split_names = ("train", "calibration", "eval")
     targets = _target_sizes(len(groups), ratios)
     label_group_counts = Counter(label for group in groups for label in group.labels)
-    impossible = sorted(label for label, count in label_group_counts.items() if count < 3)
+    impossible = sorted(
+        label for label, count in label_group_counts.items() if count < 3
+    )
     if impossible:
         raise ValueError(
             "Cannot place every label in train/calibration/eval; labels appear in fewer than "
@@ -224,11 +231,16 @@ def stratified_group_split(
         str(row["service_base"]) for group in groups for row in group.rows
     )
     target_label_rows = {
-        split: {label: count * ratios[index] for label, count in total_label_rows.items()}
+        split: {
+            label: count * ratios[index] for label, count in total_label_rows.items()
+        }
         for index, split in enumerate(split_names)
     }
     target_service_rows = {
-        split: {service: count * ratios[index] for service, count in total_service_rows.items()}
+        split: {
+            service: count * ratios[index]
+            for service, count in total_service_rows.items()
+        }
         for index, split in enumerate(split_names)
     }
 
@@ -313,13 +325,17 @@ def stratified_group_split(
     return assignments
 
 
-def flatten_groups(groups: Iterable[DialogueGroup], logical_split: str) -> list[dict[str, Any]]:
+def flatten_groups(
+    groups: Iterable[DialogueGroup], logical_split: str
+) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for group in groups:
         for original in group.rows:
             row = dict(original)
             row["split"] = logical_split
-            row["example_id"] = f"{logical_split}::{original['source_dialogue_id']}::{original['example_id'].split('::')[-1]}"
+            row["example_id"] = (
+                f"{logical_split}::{original['source_dialogue_id']}::{original['example_id'].split('::')[-1]}"
+            )
             rows.append(row)
     return rows
 
@@ -344,7 +360,11 @@ def _validate_label_coverage(
             raise ValueError(f"{split_name} split is missing train labels: {missing}")
     for split_name, rows in split_rows.items():
         counts = Counter(str(row["tool_label"]) for row in rows)
-        too_small = {label: count for label, count in counts.items() if count < minimum_rows_per_label}
+        too_small = {
+            label: count
+            for label, count in counts.items()
+            if count < minimum_rows_per_label
+        }
         if too_small:
             raise ValueError(
                 f"{split_name} split has labels below minimum_rows_per_label="
@@ -366,7 +386,9 @@ def build_stratified_sgd_datasets(
 
     train_schemas = load_schemas(raw / "train")
     train_dialogues = load_dialogues(raw / "train")
-    train_groups_all = build_dialogue_groups(train_dialogues, train_schemas, "official_train")
+    train_groups_all = build_dialogue_groups(
+        train_dialogues, train_schemas, "official_train"
+    )
     selected_train_groups = select_balanced_dialogues(
         train_groups_all, max_train_dialogues, seed=seed
     )
@@ -387,7 +409,9 @@ def build_stratified_sgd_datasets(
         schemas = load_schemas(raw / source_split)
         dialogues = load_dialogues(raw / source_split)
         groups = build_dialogue_groups(dialogues, schemas, f"official_{source_split}")
-        selected = select_balanced_dialogues(groups, max_ood_dialogues, seed=seed + (1 if source_split == "dev" else 2))
+        selected = select_balanced_dialogues(
+            groups, max_ood_dialogues, seed=seed + (1 if source_split == "dev" else 2)
+        )
         rows = flatten_groups(selected, logical_name)
         write_jsonl(processed / f"tool_policy_{logical_name}.jsonl", rows)
         ood_summary[logical_name] = {
@@ -421,7 +445,6 @@ def build_stratified_sgd_datasets(
     }
     write_json(processed / "sgd_split_manifest.json", manifest)
     return manifest
-
 
 
 def build_service_docs_from_training_rows(
@@ -499,14 +522,32 @@ def build_service_docs_from_training_rows(
             )
 
     tool_docs = [
-        ("tool::search_places", "Search hotels, restaurants, travel, events, and place-like services."),
-        ("tool::calendar_lookup", "Read calendar events and calendar availability without changing state."),
-        ("tool::calendar_write", "Stage a calendar create, update, or delete action for confirmation."),
+        (
+            "tool::search_places",
+            "Search hotels, restaurants, travel, events, and place-like services.",
+        ),
+        (
+            "tool::calendar_lookup",
+            "Read calendar events and calendar availability without changing state.",
+        ),
+        (
+            "tool::calendar_write",
+            "Stage a calendar create, update, or delete action for confirmation.",
+        ),
         ("tool::media_search", "Search movies, music, shows, and media-like services."),
         ("tool::weather_lookup", "Retrieve weather forecasts by location and date."),
-        ("tool::search_docs", "Retrieve personal or enterprise documents and policies."),
-        ("tool::ask_clarification", "Ask for missing required information before taking action."),
-        ("tool::safety_check", "Review sensitive or policy-constrained requests before acting."),
+        (
+            "tool::search_docs",
+            "Retrieve personal or enterprise documents and policies.",
+        ),
+        (
+            "tool::ask_clarification",
+            "Ask for missing required information before taking action.",
+        ),
+        (
+            "tool::safety_check",
+            "Review sensitive or policy-constrained requests before acting.",
+        ),
         ("tool::final_answer", "Complete the task with a grounded answer."),
     ]
     for doc_id, body in tool_docs:
@@ -523,6 +564,7 @@ def build_service_docs_from_training_rows(
     write_jsonl(out_path, docs)
     return docs
 
+
 def audit_raw_mapping(
     raw_dir: str | Path,
     out_json: str | Path = "outputs/sgd_mapping_audit.json",
@@ -536,7 +578,9 @@ def audit_raw_mapping(
 
     for split in ("train", "dev", "test"):
         schemas = load_schemas(raw / split)
-        rows = rows_for_dialogues(load_dialogues(raw / split), schemas, f"official_{split}")
+        rows = rows_for_dialogues(
+            load_dialogues(raw / split), schemas, f"official_{split}"
+        )
         labels = Counter(str(row["tool_label"]) for row in rows)
         services = Counter(str(row["service_base"]) for row in rows)
         intents = Counter(str(row["intent"]) for row in rows)
@@ -589,7 +633,10 @@ def audit_raw_mapping(
         "",
         "## Combined tool-label counts",
     ]
-    lines.extend(f"- `{label}`: {count}" for label, count in result["combined_label_counts"].items())
+    lines.extend(
+        f"- `{label}`: {count}"
+        for label, count in result["combined_label_counts"].items()
+    )
     lines += ["", "## Service to tool mapping"]
     for service, counts in result["service_to_tool_counts"].items():
         lines.append(f"- `{service}`: {counts}")

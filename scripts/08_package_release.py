@@ -1,16 +1,26 @@
 from __future__ import annotations
 
-from pathlib import Path
 import shutil
 import sys
 import zipfile
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 SRC_DIR = ROOT_DIR / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-EXCLUDE_DIR_NAMES = {"__pycache__", ".pytest_cache", ".git", ".mypy_cache", ".ruff_cache", ".venv", "venv", "build", "dist"}
+EXCLUDE_DIR_NAMES = {
+    "__pycache__",
+    ".pytest_cache",
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+}
 EXCLUDE_TOP_LEVEL = {"outputs", "models"}
 EXCLUDE_SUFFIXES = {".pyc", ".pyo", ".sqlite"}
 EXCLUDE_REL_PREFIXES = {("data", "monte_carlo_raw"), ("data", "monte_carlo_processed")}
@@ -33,7 +43,9 @@ def should_include(path: Path) -> bool:
     return True
 
 
-def package_release(out_path: str | Path = "/mnt/data/agentic-eval-framework-final.zip") -> Path:
+def package_release(
+    out_path: str | Path = "/mnt/data/agentic-eval-framework-final.zip",
+) -> Path:
     out = Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     if out.exists():
@@ -46,5 +58,9 @@ def package_release(out_path: str | Path = "/mnt/data/agentic-eval-framework-fin
 
 
 if __name__ == "__main__":
-    target = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("/mnt/data/agentic-eval-framework-final.zip")
+    target = (
+        Path(sys.argv[1])
+        if len(sys.argv) > 1
+        else Path("/mnt/data/agentic-eval-framework-final.zip")
+    )
     print(package_release(target))

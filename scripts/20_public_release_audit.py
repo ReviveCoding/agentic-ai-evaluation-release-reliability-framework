@@ -4,9 +4,8 @@ import json
 import re
 import subprocess
 import sys
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
-
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT_JSON = ROOT / "reports" / "public_release_audit.json"
@@ -81,9 +80,7 @@ FORBIDDEN_PREFIXES = (
 SECRET_PATTERNS = (
     (
         "private key",
-        re.compile(
-            r"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----"
-        ),
+        re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----"),
     ),
     ("AWS access key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
     (
@@ -263,9 +260,7 @@ def main() -> int:
             continue
 
         if size > MAX_TRACKED_BYTES:
-            failures.append(
-                f"tracked file exceeds 5 MiB: {normalized} ({size} bytes)"
-            )
+            failures.append(f"tracked file exceeds 5 MiB: {normalized} ({size} bytes)")
 
         if not is_text_candidate(normalized):
             continue
@@ -277,9 +272,7 @@ def main() -> int:
         if normalized not in GENERATED_AUDIT_REPORTS:
             for token in PLACEHOLDER_TOKENS:
                 if token in text:
-                    failures.append(
-                        f"unresolved placeholder {token!r} in {normalized}"
-                    )
+                    failures.append(f"unresolved placeholder {token!r} in {normalized}")
 
             for label, pattern in SECRET_PATTERNS:
                 if pattern.search(text):
@@ -293,13 +286,9 @@ def main() -> int:
 
     pyproject_path = ROOT / "pyproject.toml"
     if pyproject_path.exists():
-        pyproject_text = pyproject_path.read_text(
-            encoding="utf-8", errors="replace"
-        )
+        pyproject_text = pyproject_path.read_text(encoding="utf-8", errors="replace")
         if "Apache-2.0" not in pyproject_text:
-            failures.append(
-                "pyproject.toml does not declare the Apache-2.0 license"
-            )
+            failures.append("pyproject.toml does not declare the Apache-2.0 license")
         if "ReviveCoding/agentic-ai-evaluation-release-reliability-framework" not in (
             pyproject_text
         ):

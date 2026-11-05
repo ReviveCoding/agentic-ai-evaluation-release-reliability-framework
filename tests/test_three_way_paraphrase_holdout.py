@@ -1,6 +1,9 @@
 import numpy as np
 
-from agentic_eval_framework.simulation.monte_carlo import SERVICE_SPECS, _render_utterance
+from agentic_eval_framework.simulation.monte_carlo import (
+    SERVICE_SPECS,
+    _render_utterance,
+)
 
 
 def test_train_calibration_and_test_use_distinct_templates():

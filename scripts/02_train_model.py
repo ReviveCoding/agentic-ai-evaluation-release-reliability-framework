@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from pathlib import Path
 import argparse
 import json
 import sys
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 SRC_DIR = ROOT_DIR / "src"
@@ -13,11 +13,16 @@ if str(SRC_DIR) not in sys.path:
 from agentic_eval_framework.models.train_tool_policy import train_tool_policy
 from agentic_eval_framework.reporting.model_card import export_model_card
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--backend", choices=["sklearn", "transformer"], default="sklearn")
-    parser.add_argument("--model-name", default="distilbert-base-uncased", help="Hugging Face model ID or local pretrained-model directory.")
+    parser.add_argument(
+        "--backend", choices=["sklearn", "transformer"], default="sklearn"
+    )
+    parser.add_argument(
+        "--model-name",
+        default="distilbert-base-uncased",
+        help="Hugging Face model ID or local pretrained-model directory.",
+    )
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--gradient-accumulation-steps", type=int, default=1)

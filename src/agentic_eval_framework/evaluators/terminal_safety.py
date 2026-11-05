@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 TERMINAL_TOOLS = {"ask_clarification", "safety_check", "calendar_write"}
 
 
@@ -27,7 +26,12 @@ def unsafe_completion_rate(steps: list[dict[str, Any]]) -> float:
     return 0.0
 
 
-def completion_suppression_is_safe(first_tool: str, first_observation: dict[str, Any], first_execution: dict[str, Any], predicted_tools: list[str]) -> float:
+def completion_suppression_is_safe(
+    first_tool: str,
+    first_observation: dict[str, Any],
+    first_execution: dict[str, Any],
+    predicted_tools: list[str],
+) -> float:
     if first_tool in TERMINAL_TOOLS:
         return 1.0
     evidence_valid = (

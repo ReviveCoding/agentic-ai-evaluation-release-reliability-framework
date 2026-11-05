@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pathlib import Path
 import shutil
 import sys
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 SRC_DIR = ROOT_DIR / "src"
@@ -29,7 +29,9 @@ GENERATED_PATHS = [
 def clean(root: Path = ROOT_DIR, include_reports: bool = False) -> list[str]:
     removed: list[str] = []
     for path in root.rglob("*"):
-        if path.is_dir() and (path.name in CLEAN_DIRS or path.name.endswith(".egg-info")):
+        if path.is_dir() and (
+            path.name in CLEAN_DIRS or path.name.endswith(".egg-info")
+        ):
             shutil.rmtree(path, ignore_errors=True)
             removed.append(str(path.relative_to(root)))
     for rel in GENERATED_PATHS:

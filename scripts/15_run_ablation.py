@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 SRC_DIR = ROOT_DIR / "src"
@@ -36,12 +36,18 @@ def _predictor(model_dir: str, batch_size: int):
         for start in range(0, len(texts), max(1, batch_size)):
             chunk = texts[start : start + max(1, batch_size)]
             batch = tokenizer(
-                chunk, truncation=True, padding=True, max_length=256, return_tensors="pt"
+                chunk,
+                truncation=True,
+                padding=True,
+                max_length=256,
+                return_tensors="pt",
             )
             batch = {key: value.to(device) for key, value in batch.items()}
             with torch.inference_mode():
                 predicted = model(**batch).logits.argmax(dim=-1)
-            output.extend(id_to_label[int(index)] for index in predicted.detach().cpu().tolist())
+            output.extend(
+                id_to_label[int(index)] for index in predicted.detach().cpu().tolist()
+            )
         return output
 
     return predict
@@ -123,7 +129,9 @@ def main() -> None:
         ),
         "linear_retrain_ablation": evaluate_linear_retrain_modes(train_rows, eval_rows),
         "metadata_oracle": evaluate_metadata_oracle(train_rows, eval_rows),
-        "permutation_sensitivity": evaluate_permutation_sensitivity(eval_rows, predictor),
+        "permutation_sensitivity": evaluate_permutation_sensitivity(
+            eval_rows, predictor
+        ),
     }
     write_json(args.out_path, result)
     export_markdown(result, Path(args.report_path))

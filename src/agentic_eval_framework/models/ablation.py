@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from collections import Counter, defaultdict
 import random
-from typing import Any, Callable
+from collections import Counter, defaultdict
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -10,7 +11,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report, f1_score
 
 from agentic_eval_framework.data.build_tool_policy_dataset import build_text
-
 
 ABLATION_MODES = (
     "full",
@@ -56,7 +56,9 @@ def build_ablation_text(row: dict[str, Any], mode: str) -> str:
 def _metrics(y_true: list[str], y_pred: list[str], labels: list[str]) -> dict[str, Any]:
     return {
         "accuracy": float(accuracy_score(y_true, y_pred)),
-        "macro_f1": float(f1_score(y_true, y_pred, labels=labels, average="macro", zero_division=0)),
+        "macro_f1": float(
+            f1_score(y_true, y_pred, labels=labels, average="macro", zero_division=0)
+        ),
         "classification_report": classification_report(
             y_true, y_pred, labels=labels, zero_division=0, output_dict=True
         ),
@@ -99,8 +101,12 @@ def evaluate_transformer_input_modes(
             with torch.inference_mode():
                 probabilities = torch.softmax(model(**batch).logits, dim=-1)
             confidence, predicted = probabilities.max(dim=-1)
-            predictions.extend(id_to_label[int(index)] for index in predicted.detach().cpu().tolist())
-            confidences.extend(float(value) for value in confidence.detach().cpu().tolist())
+            predictions.extend(
+                id_to_label[int(index)] for index in predicted.detach().cpu().tolist()
+            )
+            confidences.extend(
+                float(value) for value in confidence.detach().cpu().tolist()
+            )
         result = _metrics(y_true, predictions, labels)
         result["mean_confidence"] = float(np.mean(confidences)) if confidences else 0.0
         output[mode] = result
@@ -133,7 +139,9 @@ def evaluate_linear_retrain_modes(
             random_state=seed,
         )
         classifier.fit(x_train, y_train)
-        predictions = [str(value) for value in classifier.predict(vectorizer.transform(eval_text))]
+        predictions = [
+            str(value) for value in classifier.predict(vectorizer.transform(eval_text))
+        ]
         output[mode] = _metrics(y_eval, predictions, labels)
 
     full_score = float(output.get("full", {}).get("macro_f1", 0.0))
